@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: odoo-postgresql
+  labels:
+    app: odoo
+spec:
+  selector:
+    matchLabels:
+      app: odoo
+      tier: postgresql
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: odoo
+        tier: postgresql
+    spec:
+      containers:
+        - image: postgres:15.3
+          name: postgresql
+          env:
+            - name: POSTGRES_DB
+              value: postgres
+            - name: POSTGRES_USER
+              value: odoo
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgresql-pass
+                  key: password
+          ports:
+            - containerPort: 5432
+              name: postgresql
+          volumeMounts:
+            - name: postgresql-persistent-storage
+              mountPath: /var/lib/postgresql
+      volumes:
+        - name: postgresql-persistent-storage
+          persistentVolumeClaim:
+            claimName: postgresql-pv-claim

@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: odoo
+  labels:
+    app: odoo
+spec:
+  selector:
+    matchLabels:
+      app: odoo
+      tier: odoo
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: odoo
+        tier: odoo
+    spec:
+      containers:
+        - image: odoo:16.0
+          name: odoo
+          env:
+            - name: HOST
+              value: odoo-postgresql
+            - name: USER
+              value: odoo
+            - name: PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgresql-pass
+                  key: password
+          ports:
+            - containerPort: 8069
+              name: odoo
+          volumeMounts:
+            - name: odoo-persistent-storage
+              mountPath: /mnt/extra-addons
+      volumes:
+        - name: odoo-persistent-storage
+          persistentVolumeClaim:
+            claimName: odoo-pv-claim

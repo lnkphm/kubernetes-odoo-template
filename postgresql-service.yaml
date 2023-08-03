@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: odoo-postgresql
+  labels:
+    app: odoo
+spec:
+  ports:
+    - port: 5432
+  selector:
+    app: odoo
+    tier: postgresql
+  clusterIP: None

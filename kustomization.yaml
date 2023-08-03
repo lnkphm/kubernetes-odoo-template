@@ -1,0 +1,11 @@
+secretGenerator:
+  - name: postgresql-pass
+    literals:
+    - password=password
+resources:
+  - postgresql-deployment.yaml
+  - postgresql-service.yaml
+  - postgresql-pv-claim.yaml
+  - odoo-deployment.yaml
+  - odoo-service.yaml
+  - odoo-pv-claim.yaml
